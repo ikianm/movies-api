@@ -5,16 +5,16 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 
-import { join } from 'path';
+import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
-import { dirname } from 'path';
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
 import authRoutes from './routes/auth.js';
 
-const app = express();
+import { isAuth } from './middlewares/auth.js';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const app = express();
 dotenv.config();
 app.use(morgan('tiny'));
 app.use(helmet());
@@ -25,6 +25,7 @@ app.use(cors({
 app.use(express.json());
 app.use('/static', express.static(join(__dirname, 'static')));
 
+//Routes
 app.use('/auth', authRoutes);
 
 try {

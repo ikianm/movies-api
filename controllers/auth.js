@@ -15,6 +15,7 @@ const postRegister = async (req, res) => {
         return res.status(201).json(user);
     } catch (err) {
         console.log(err.message);
+        return res.status(500).json({ message: 'Database failed to connect' });
     }
 };
 
@@ -26,9 +27,11 @@ const postLogin = async (req, res) => {
         const isPasswordMatch = await bcrypt.compare(password, user.password);
         if (!isPasswordMatch) return res.status(401).json({ message: 'Incorrect password.' });
         const token = jwt.sign(user, process.env.JWT_SECRET);
-        return res.status(202).json({ userId: user._id, token });
+        delete user.password;
+        return res.status(202).json({ user, token });
     } catch (err) {
         console.log(err.message);
+        return res.status(500).json({ message: 'Database failed to connect' });
     }
 };
 
