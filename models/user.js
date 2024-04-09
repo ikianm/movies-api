@@ -1,4 +1,4 @@
-import { Schema, model, ObjectId } from 'mongoose';
+import { Schema, model } from 'mongoose';
 
 const userSchema = new Schema({
     email: {
@@ -25,7 +25,7 @@ const userSchema = new Schema({
         enum: ['USER', 'ADMIN']
     },
     addedMovie: {
-        type: [ObjectId],
+        type: [Schema.Types.ObjectId],
         ref: 'Movie'
     },
     createdAt: {
@@ -37,6 +37,11 @@ const userSchema = new Schema({
         type: Date,
         default: () => Date.now()
     }
+});
+
+userSchema.pre('save', function (next) {
+    this.updatedAt = Date.now();
+    next();
 });
 
 export default model('User', userSchema);

@@ -8,9 +8,11 @@ import mongoose from 'mongoose';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
+import adminRoutes from './routes/admin.js';
 import authRoutes from './routes/auth.js';
+import movieRoutes from './routes/movie.js';
 
-import { isAuth } from './middlewares/auth.js';
+import { isAdmin, isAuth } from './middlewares/auth.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -25,8 +27,14 @@ app.use(cors({
 app.use(express.json());
 app.use('/static', express.static(join(__dirname, 'static')));
 
-//Routes
+//Authentication Routes
 app.use('/auth', authRoutes);
+
+//Admin Routes
+app.use('/admin', isAuth, isAdmin, adminRoutes);
+
+//Movie Routes
+app.use('/movies', movieRoutes);
 
 try {
     await mongoose.connect(process.env.MONGODB_URI);
